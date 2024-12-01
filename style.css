@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+}
+
+body {
+    background: linear-gradient(102deg, #59a7e1, #b677a3);
+    background-size: 400% 400%;
+    -webkit-animation: AnimationName 25s ease infinite;
+    -moz-animation: AnimationName 25s ease infinite;
+    animation: AnimationName 25s ease infinite;
+}
+
+@-webkit-keyframes AnimationName {
+    0%{background-position:0% 43%}
+    50%{background-position:100% 58%}
+    100%{background-position:0% 43%}
+}
+@-moz-keyframes AnimationName {
+    0%{background-position:0% 43%}
+    50%{background-position:100% 58%}
+    100%{background-position:0% 43%}
+}
+@keyframes AnimationName {
+    0%{background-position:0% 43%}
+    50%{background-position:100% 58%}
+    100%{background-position:0% 43%}
+}
+
+button {
+    width: fit-content;
+    outline: none;
+    border: 0;
+    border-radius: 0.2rem;
+    cursor: pointer;
+}
+
+svg {
+    width: 1.4rem;
+    height: 1.4rem;
+    cursor: pointer;
+}
+
+input {
+    border: 0.5px solid rgb(231, 231, 231);
+    border-radius: 0.2rem;
+    padding: 0.8rem 0.6rem;
+}
+
+.todo-image {
+    width: 50px;
+    height: auto;
+}
+
+.todo-image img {
+    width: 100%;
+    height: 100%;
+}
+
+.heading-cont {
+    display: flex;
+    gap: max(1.2rem);
+    justify-content: center;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: 400;
+    color: rgb(70, 70, 70);
+    margin-top: max(4rem);
+    margin-bottom: max(5rem);
+}
+
+.heading-cont h2{
+    font-size: 2.5rem;
+}
+
+.input-group input{
+    font-size: 1rem;
+    font-style: italic;
+    color: #2e2e2e;
+    width: 350px;
+    min-width: unset;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.input-group input:focus{
+    border: none;
+    outline: none;
+    border: 0.5px solid #59a6e140;
+    border-right: none;
+}
+
+.input-group {
+    display: flex;
+    gap: 0;
+}
+
+.addBtn {
+    background-color: #A6AEBF;
+    width: fit-content;
+    padding: 0 1rem;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    transition: background-color 0.5s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.addBtn:hover {
+    background-color: #59A7E1;
+    transform: scale(1.0)
+}
+
+.addBtn svg{
+    width: 1.5rem;
+    height: auto;
+    stroke-width: 2px;
+    stroke: #ffffff;;
+}
+
+.required {
+    display: none;
+    font-size: 13px;
+    color: #ff0000;
+    font-style: italic;
+}
+
+.todo-container {
+    width: fit-content;
+    background-color: #FBFBFB;
+    border-radius: 0.4rem;
+    border: 0.5px solid #59a6e1ad;
+    padding: 1rem 2rem;
+    margin: 4rem auto 0 auto;
+    display: grid;
+    gap: 0.6rem;
+}
+
+.filter-block {
+    margin: 0 auto;
+}
+
+.filter-block button {
+    background-color: transparent;
+    border: 0.5px solid #e7e7e7;
+    padding: 0.3rem 0.5rem;
+    transition: border 0.4s ease-in-out;
+}
+
+.filter-block button:hover {
+    border: 0.5px solid #59A7E1;
+}
+
+.filter-block button.active {
+    background-color: #59A7E1;
+    color: #ffffff;
+    border: none;
+}
+
+.filter-block {
+    margin-top: max(2rem);
+}
+
+.card-block .card {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-block span.completed  {
+    text-decoration: line-through;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 0.2rem;
+    border: 0.5px solid #e7e7e7;
+    padding: 0.8rem;
+    transition: box-shadow 0.3s ease-in-out;
+    box-shadow: 1px 1px 7px 0px rgba(0, 0, 0, 0.05);
+    -webkit-box-shadow: 1px 1px 7px 0px rgba(0, 0, 0, 0.05);
+    -moz-box-shadow: 1px 1px 7px 0px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    margin-bottom: 0.3rem;
+}
+
+.card:hover {
+    box-shadow: 4px 4px 10px 0px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 4px 4px 10px 0px rgba(0, 0, 0, 0.1);
+    -moz-box-shadow: 4px 4px 10px 0px rgba(0, 0, 0, 0.1);
+}
+
+.mark-completed-uncomplete {
+    color: #238845;
+}
+
+.edit {
+    fill: none !important;
+}
+
+svg.delete {
+    color: #e15976;
+}
+
+.mark-completed-uncomplete,
+.edit,
+.delete {
+    transition: transform 0.5s ease-in-out;
+}
+
+.mark-completed-uncomplete:hover,
+.edit:hover,
+svg.delete:hover {
+    animation: shakeUp 0.5s ease-in-out;
+}
+
+@keyframes shakeUp {
+    0%, 100% {
+        transform: translatey(0);
+    }
+    25% {
+        transform: translatey(-5px);
+    }
+    50% {
+        transform: translatey(5px);
+    }
+    75% {
+        transform: translatey(-5px);
+    }
+}
+
+
+.mark-completed-uncomplete.editing,
+.edit.editing,
+svg.delete.editing
+.card .span {
+    color: #A6AEBF;
+    fill: #A6AEBF !important;
+    stroke: #A6AEBF;
+}
+
+/* Just to track edit state*/
+.upate-mode {
+
+}

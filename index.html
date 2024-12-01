@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main>
+        <div class="todo-container">
+            <div class="heading-cont">
+                <div class="todo-image">
+                    <img src="to-do-list.png" alt="">
+                </div>
+                <div class="text">
+                    <h2>APP</h2>
+                </div>
+            </div>
+            <div class="input-group">
+                <input type="text" name="todoInput" id="todoInput" placeholder="Enter to do" required>
+                <button class="addBtn" id="addTodoBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+                </button>
+            </div>
+            <span class="required">This field is required.</span>
+
+
+            <div class="filter-block">
+                <button class="active">All</button>
+                <button>Completed</button>
+                <button>Uncompleted</button>
+            </div>
+
+            <div class="list-block">
+                <div class="card-block" id="todoCardBlock">
+
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="main.js"></script>
+</body>
+</html>

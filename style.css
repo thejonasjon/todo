@@ -16,22 +16,22 @@ body {
 body {
     background: linear-gradient(102deg, #59a7e1, #b677a3);
     background-size: 400% 400%;
-    -webkit-animation: AnimationName 25s ease infinite;
-    -moz-animation: AnimationName 25s ease infinite;
-    animation: AnimationName 25s ease infinite;
+    -webkit-animation: bgAnimation 25s ease infinite;
+    -moz-animation: bgAnimation 25s ease infinite;
+    animation: bgAnimation 25s ease infinite;
 }
 
-@-webkit-keyframes AnimationName {
+@-webkit-keyframes bgAnimation {
     0%{background-position:0% 43%}
     50%{background-position:100% 58%}
     100%{background-position:0% 43%}
 }
-@-moz-keyframes AnimationName {
+@-moz-keyframes bgAnimation {
     0%{background-position:0% 43%}
     50%{background-position:100% 58%}
     100%{background-position:0% 43%}
 }
-@keyframes AnimationName {
+@keyframes bgAnimation {
     0%{background-position:0% 43%}
     50%{background-position:100% 58%}
     100%{background-position:0% 43%}
@@ -142,6 +142,7 @@ input {
     margin: 4rem auto 0 auto;
     display: grid;
     gap: 0.6rem;
+    margin-bottom: max(4rem);
 }
 
 .filter-block {

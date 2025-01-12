@@ -119,9 +119,9 @@ function handleTodoSave() {
 
 // Delete a todo
 function handleTodoDelete(index) {
-    const todos = getTodosFromSessionStorage();
+    const todos = getTodosFromLocalStorage();
     todos.splice(index, 1);
-    getTodosFromLocalStorage(todos);
+    saveTodosToLocalStorage(todos);
     renderTodos(todos);
 }
 
@@ -144,6 +144,7 @@ function enterEditMode(index) {
 // Filter todos
 function filterTodos(filter) {
     const todos = getTodosFromLocalStorage();
+
     let filteredTodos;
 
     switch (filter) {
@@ -158,9 +159,22 @@ function filterTodos(filter) {
     }
 
     renderTodos(filteredTodos);
+
+    const filterButtons = Filters.querySelectorAll("button");
+    filterButtons.forEach(button => {
+        if (button.textContent === filter) {
+            button.classList.add("active");
+        } else {
+            button.classList.remove("active");
+        }
+    });
 }
 
-
+// Event Listeners
+Filters.addEventListener("click", (e) => {
+    const filter = e.target.textContent.trim();
+    filterTodos(filter);
+});
 
 // Event Listeners
 addTodoBtn.addEventListener("click", handleTodoSave);

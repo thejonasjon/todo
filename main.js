@@ -117,11 +117,10 @@ function handleTodoSave() {
     todoInput.value = "";
 }
 
-// Delete a todo
 function handleTodoDelete(index) {
-    const todos = getTodosFromSessionStorage();
+    const todos = getTodosFromLocalStorage();
     todos.splice(index, 1);
-    getTodosFromLocalStorage(todos);
+    saveTodosToLocalStorage(todos);
     renderTodos(todos);
 }
 

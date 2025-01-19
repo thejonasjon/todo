@@ -147,10 +147,10 @@ function filterTodos(filter) {
 
     switch (filter) {
         case "Completed":
-            filteredTodos = todos.filter(todo => todo.completed);
+            filteredTodos = todos.filter(todo => todo.completed === true);
             break;
         case "Uncompleted":
-            filteredTodos = todos.filter(todo => !todo.completed);
+            filteredTodos = todos.filter(todo => todo.completed === false);
             break;
         default:
             filteredTodos = todos;
@@ -158,6 +158,7 @@ function filterTodos(filter) {
 
     renderTodos(filteredTodos);
 }
+
 
 
 

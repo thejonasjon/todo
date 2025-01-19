@@ -1,10 +1,15 @@
 'use strict';
 
+// Change this two instance to switch from local storage to session,
+// saveTodosToSessionStorage = saveTodosToSessionStorage
+// getTodosFromLocalStorage = getTodosFromSessionStorage
+
 // Get & set variables from DOM elements
 const todoInput = document.querySelector("#todoInput");
 const addTodoBtn = document.querySelector("#addTodoBtn");
 const requiredError = document.querySelector(".required");
 const todoCardBlock = document.querySelector("#todoCardBlock");
+const Filters = document.querySelector(".filter-block");
 
 const svgPaths = {
     markCompleted: "m9.55 17.308l-4.97-4.97l.714-.713l4.256 4.256l9.156-9.156l.713.714z",
@@ -18,7 +23,7 @@ const todoActionButtons = [
     { id: "deleteTodoBtn", classes: ["delete"], path: svgPaths.delete }
 ];
 
-// Create element helper
+// Helpers
 function createElement(tag, selectors = {}) {
     const newElement = document.createElement(tag);
     if (selectors.id) newElement.id = selectors.id;
@@ -27,7 +32,6 @@ function createElement(tag, selectors = {}) {
     return newElement;
 }
 
-// Create SVG helper
 function createSVG(classes, pathData) {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("viewBox", "0 0 24 24");
@@ -36,193 +40,153 @@ function createSVG(classes, pathData) {
     return svg;
 }
 
-// Add new todo
-let editingCard = null;
+// Save todos to localStorage
+function saveTodosToLocalStorage(todos) {
+    localStorage.setItem("todos", JSON.stringify(todos));
+}
 
-addTodoBtn.addEventListener("click", () => {
-    if (todoInput.classList.contains("update-mode") && editingCard) {
-        // Update the text content of the editing card
-        const oldText = editingCard.querySelector("span");
-        if (todoInput.value === ""){
-            requiredError.style.display = "block";
-        } else if (todoInput.value === oldText.textContent){
-            requiredError.textContent = "No changes, update discarded.";
-            requiredError.style.display = "block";
+// Save todos to sessionStorage
+// function saveTodosToSessionStorage(todos) {
+//     sessionStorage.setItem("todos", JSON.stringify(todos));
+// }
 
-            // To be improve to display none after few munite, #Need to read on js datetime again
-            // Display warning message when no update is made
-            if (requiredError.style.display === "block"){
-                todoInput.addEventListener("focus", () => {
-                    requiredError.style.display = "none";
-                    requiredError.textContent = "This field is required.";
-                });
-            }
+// Get todos from localStorage
+function getTodosFromLocalStorage() {
+    return JSON.parse(localStorage.getItem("todos")) || [];
+}
 
-        } else {
-            oldText.innerText = todoInput.value;
-        }
+// Get todos from sessionStorage
+// function getTodosFromSessionStorage() {
+//     return JSON.parse(sessionStorage.getItem("todos")) || [];
+// }
 
-        // Reset styles and states for the editing card
-        resetEditMode();
-
-        // Clear the input and remove update mode
-        todoInput.value = "";
-        todoInput.classList.remove("update-mode");
-
-    } else if (todoInput.value !== "") {
-        // Create a new todo card if not in update mode
-        const divCard = createElement("div", { classes: ["card"] });
-        const todoText = divCard.appendChild(createElement("span"));
-        todoText.innerText = todoInput.value;
-
-        const divActionBlock = divCard.appendChild(createElement("div", { classes: ["actions-block"] }));
-
-        todoActionButtons.forEach(btnObj => {
-            const todoBtn = createElement("span", { id: btnObj.id });
-            const todoBtnSvg = createSVG(btnObj.classes, btnObj.path);
-            todoBtn.appendChild(todoBtnSvg);
-            divActionBlock.appendChild(todoBtn);
+function renderTodos(todos) {
+    todoCardBlock.innerHTML = "";
+    todos.forEach((todo, index) =>
+        {createTodoCard(todo, index)
         });
+}
 
-        todoCardBlock.appendChild(divCard);
-        todoInput.value = "";
-    } else {
-        // Show required message if input is empty
+function createTodoCard(todo, index) {
+    const divCard = createElement("div", { classes: ["card"], id: `todo-${index}` });
+
+    // creates a <span> element with the inner content (text or HTML) set to todo.text
+    // const todoText = divCard.appendChild(createElement("span", { html: todo.text }));
+    const todoText = document.createElement("span");
+    todoText.textContent = todo.text;
+    divCard.appendChild(todoText);
+    if (todo.completed) todoText.classList.add("completed");
+
+    const divActionBlock = divCard.appendChild(createElement("div", { classes: ["actions-block"] }));
+    todoActionButtons.forEach(btnObj => {
+        const todoBtn = createElement("span", { id: btnObj.id });
+        const todoBtnSvg = createSVG(btnObj.classes, btnObj.path);
+        todoBtn.appendChild(todoBtnSvg);
+        divActionBlock.appendChild(todoBtn);
+    });
+
+    todoCardBlock.appendChild(divCard);
+}
+
+// Add a new or update an existing todo
+function handleTodoSave() {
+    const todos = getTodosFromLocalStorage();
+
+    if (todoInput.value === "") {
         requiredError.style.display = "block";
         todoInput.addEventListener("focus", () => {
             requiredError.style.display = "none";
         });
+        return;
     }
-});
 
-// Handles clicking on Edit, ensuring only one item is in edit mode
-document.addEventListener("click", (e) => {
-    const editButton = e.target.closest("#editTodoBtn");
-    if (editButton) {
-        const card = editButton.closest(".card");
-
-        // If the clicked card is already in edit mode, do nothing
-        if (editingCard === card) return;
-
-        // Clear the current edit mode if another card is being edited
-        if (editingCard) resetEditMode();
-
-        // Enter edit mode for the new card
-        enterEditMode(card);
+    if (todoInput.classList.contains("update-mode")) {
+        // Update existing todo using dataset to access all attribute with data-* on the input
+        const todoIndex = todoInput.dataset.index;
+        todos[todoIndex].text = todoInput.value;
+        // console.log(todoInput.value)
+        todoInput.classList.remove("update-mode");
+        todoInput.removeAttribute("data-index");
+    } else {
+        // Add new todo
+        todos.push({ text: todoInput.value, completed: false });
     }
-});
 
-todoCardBlock.addEventListener("click", todoActions)
-
-// Mark to complete/uncomplete, delete
-function todoActions(e) {
-    e.preventDefault();
-    const clickedElement = e.target;
-
-    if (clickedElement.closest("#todoCompletedUncompleteBtn")) {
-        const card = clickedElement.closest(".card");
-        const todoTextSpan = card.querySelector("span");
-        todoTextSpan.classList.toggle("completed");
-
-    } else if (clickedElement.closest("#deleteTodoBtn")) {
-        const card = clickedElement.closest(".card");
-
-        // If deleting the currently editing card, reset the state
-        if (editingCard === card) resetEditMode();
-        card.remove();
-    }
+    saveTodosToLocalStorage(todos);
+    renderTodos(todos);
+    todoInput.value = "";
 }
 
-// Enter edit mode for a card
-function enterEditMode(card) {
-    const todoTextSpan = card.querySelector("span");
+// Delete a todo
+function handleTodoDelete(index) {
+    const todos = getTodosFromSessionStorage();
+    todos.splice(index, 1);
+    getTodosFromLocalStorage(todos);
+    renderTodos(todos);
+}
 
-    // Set the input value to the current todo text
-    todoInput.value = todoTextSpan.textContent;
+// Mark a todo as completed/uncompleted
+function handleTodoToggleCompletion(index) {
+    const todos = getTodosFromLocalStorage();
+    todos[index].completed = !todos[index].completed;
+    saveTodosToLocalStorage(todos);
+    renderTodos(todos);
+}
 
-    // Apply styles and track the card
-    card.style.pointerEvents = "none";
-    const svgs = card.querySelectorAll("svg")
-        svgs.forEach(svg => {
-            svg.classList.add("editing");
-        });
-    card.style.backgroundColor = "#e7e7e7"
-    editingCard = card;
-
-    // Mark the input as in update mode
+// Enter edit mode
+function enterEditMode(index) {
+    const todos = getTodosFromLocalStorage();
+    todoInput.value = todos[index].text;
     todoInput.classList.add("update-mode");
+    todoInput.dataset.index = index;
 }
 
-// Reset edit mode for the current editing card
-function resetEditMode() {
-    if (!editingCard) return;
+// Filter todos
+function filterTodos(filter) {
+    const todos = getTodosFromLocalStorage();
+    let filteredTodos;
 
-    // Reset styles and remove edit-related classes
-    editingCard.style.pointerEvents = "auto";
-    editingCard.classList.remove("editing");
-    const svgs = editingCard.querySelectorAll("svg")
-        svgs.forEach(svg => {
-            svg.classList.remove("editing");
-        });
-    editingCard.style.backgroundColor = "unset"
-    editingCard = null;
+    switch (filter) {
+        case "Completed":
+            filteredTodos = todos.filter(todo => todo.completed);
+            break;
+        case "Uncompleted":
+            filteredTodos = todos.filter(todo => !todo.completed);
+            break;
+        default:
+            filteredTodos = todos;
+    }
 
-    // Clear the update mode on input
-    todoInput.classList.remove("update-mode");
-}
-
-// Filters functions
-const Filters = document.querySelector(".filter-block");
-
-Filters.addEventListener("click", filterTodo);
-
-function filterTodo(e) {
-    const filter = e.target;
-
-    // Ensure the clicked element is a button
-    if (filter.tagName !== "BUTTON") return;
-
-    // Remove the 'active' class from all buttons
-    const allFilters = Filters.querySelectorAll("button");
-    allFilters.forEach(button => button.classList.remove("active"));
-
-    // Add 'active' class to the clicked button
-    filter.classList.add("active");
-
-    // Select all the cards
-    const todoCards = document.querySelectorAll(".card");
-
-    // Show/Hide cards based on the filter type
-    todoCards.forEach(card => {
-        const isCompleted = card.querySelector(".completed");
-
-        // Reset display for all cards
-        card.style.display = "flex";
-
-        switch (filter.textContent) {
-            case "All":
-                card.style.display = "flex";
-                break;
-
-            case "Completed":
-                if (isCompleted) {
-                    card.style.display = "flex";
-                } else {
-                    card.style.display = "none";
-                }
-                break;
-
-            case "Uncompleted":
-                if (!isCompleted) {
-                    card.style.display = "flex";
-                } else {
-                    card.style.display = "none";
-                }
-                break;
-        }
-    });
+    renderTodos(filteredTodos);
 }
 
 
-// BUGS / Improvement: Create todo on uncompleted state does not working fine verse versa.
-// Cater for empty state
+
+// Event Listeners
+addTodoBtn.addEventListener("click", handleTodoSave);
+
+document.addEventListener("click", (e) => {
+    const card = e.target.closest(".card");
+    if (!card) return;
+
+    // Use from array method here to be able to convert html collect into JS array,
+    // then i use indexOf method on it
+    const index = Array.from(todoCardBlock.children).indexOf(card);
+
+    if (e.target.closest("#deleteTodoBtn")) {
+        handleTodoDelete(index);
+    } else if (e.target.closest("#todoCompletedUncompleteBtn")) {
+        handleTodoToggleCompletion(index);
+    } else if (e.target.closest("#editTodoBtn")) {
+        enterEditMode(index);
+    }
+});
+
+Filters.addEventListener("click", (e) => {
+    // Get the only text, e.g All, Completed, Uncompleted
+    const filter = e.target.textContent;
+    filterTodos(filter);
+});
+
+// Initial Render
+renderTodos(getTodosFromLocalStorage());
